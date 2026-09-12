@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cambridge Discussion Text Studio v2.0</title>
+<style>
+:root{--blue:#0b4f8a;--nav:#17324d;--bg:#f4f7fb;--card:#fff;--green:#1f9d55;--amber:#d97706;--red:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:#1f2937}
+header{background:linear-gradient(135deg,#0b4f8a,#1d7bd8);color:#fff;padding:18px}
+.wrap{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+nav{background:var(--nav);padding:16px;color:#fff}
+nav button{display:block;width:100%;margin:6px 0;padding:10px;border:0;border-radius:10px;background:#224b72;color:#fff;cursor:pointer}
+main{padding:24px}
+.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 8px 20px rgba(0,0,0,.08);margin-bottom:18px}
+.hidden{display:none}
+input,textarea,select{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;margin:8px 0}
+button.primary{background:var(--blue);color:#fff;border:0;padding:10px 16px;border-radius:10px;cursor:pointer}
+.progress{height:14px;background:#e5e7eb;border-radius:10px;overflow:hidden}.bar{height:100%;width:12%;background:linear-gradient(90deg,#10b981,#2563eb)}
+.badge{display:inline-block;background:#e0f2fe;padding:5px 10px;border-radius:999px;margin:3px;color:#0369a1;font-size:13px}
+.drop{border:2px dashed #94a3b8;border-radius:12px;padding:16px;min-height:54px;margin:10px 0;background:#f8fafc}
+.draggable{background:#dbeafe;padding:10px;border-radius:8px;margin:8px 0;cursor:grab}
+.ok{color:var(--green)}.warn{color:var(--amber)}.bad{color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.metric{background:#eef6ff;border-radius:12px;padding:12px;text-align:center}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}nav{display:flex;overflow:auto;gap:8px}nav button{min-width:180px}}
+</style>
+</head>
+<body>
+<header>
+<h1>Cambridge Discussion Text Studio v2.0</h1>
+<p>Grade XII • Cambridge Integrated Curriculum • CEFR B2–C1 • Offline HTML</p>
+</header>
+
+<div class="wrap">
+<nav>
+<button onclick="go(0)">Dashboard</button>
+<button onclick="go(1)">1. Topic</button>
+<button onclick="go(2)">2. Sentences</button>
+<button onclick="go(3)">3. Paragraph</button>
+<button onclick="go(4)">4. Drag & Drop</button>
+<button onclick="go(5)">5. Writing</button>
+<button onclick="go(6)">6. Revision</button>
+<button onclick="go(7)">7. Quiz</button>
+<button onclick="go(8)">Teacher</button>
+</nav>
+
+<main>
+<div class="card page" id="p0">
+<h2>Welcome</h2>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<p id="ptext">Progress: 1/9</p>
+<div class="grid">
+<div class="metric"><h3 id="xp">0 XP</h3><small>Cambridge XP</small></div>
+<div class="metric"><h3 id="star">☆</h3><small>Serviam Star</small></div>
+<div class="metric"><h3 id="saved">No</h3><small>Draft Saved</small></div>
+</div>
+<p>Skills: <span class="badge">Critical Thinking</span><span class="badge">Academic Register</span><span class="badge">Counterargument</span><span class="badge">Evidence</span></p>
+</div>
+
+<div class="card page hidden" id="p1">
+<h2>Debatable Topic Analyzer</h2>
+<input id="topic" placeholder="Should AI replace teachers?">
+<button class="primary" onclick="topicCheck()">Analyze</button>
+<div id="topicOut"></div>
+</div>
+
+<div class="card page hidden" id="p2">
+<h2>Academic Sentence Builder</h2>
+<p>Supporters argue ____ online learning increases flexibility.</p>
+<select id="s1"><option>because</option><option>however</option><option>although</option></select>
+<button class="primary" onclick="sentenceCheck()">Check</button>
+<div id="sout"></div>
+</div>
+
+<div class="card page hidden" id="p3">
+<h2>Argument Strength Meter</h2>
+<textarea id="claim" placeholder="Write one argument."></textarea>
+<textarea id="reason" placeholder="Explain your reason."></textarea>
+<textarea id="evidence" placeholder="Add evidence or an example."></textarea>
+<button class="primary" onclick="strength()">Evaluate</button>
+<div id="meter"></div>
+</div>
+
+<div class="card page hidden" id="p4">
+<h2>Drag & Drop Discussion Structure</h2>
+<p>Arrange the correct order.</p>
+<div id="cards">
+<div class="draggable" draggable="true">Arguments Against</div>
+<div class="draggable" draggable="true">Conclusion</div>
+<div class="draggable" draggable="true">Issue</div>
+<div class="draggable" draggable="true">Arguments For</div>
+</div>
+<div class="drop" id="drop"></div>
+<button class="primary" onclick="checkOrder()">Check Order</button>
+<div id="dragOut"></div>
+</div>
+
+<div class="card page hidden" id="p5">
+<h2>Writing Workspace</h2>
+<input id="title" placeholder="Title">
+<textarea id="issue" rows="3" placeholder="Issue"></textarea>
+<textarea id="pro" rows="4" placeholder="Arguments For"></textarea>
+<textarea id="con" rows="4" placeholder="Arguments Against"></textarea>
+<textarea id="counter" rows="3" placeholder="Counterargument"></textarea>
+<textarea id="conc" rows="3" placeholder="Conclusion"></textarea>
+<button class="primary" onclick="saveDraft()">Save Draft</button>
+<div id="saveMsg"></div>
+</div>
+
+<div class="card page hidden" id="p6">
+<h2>Revision Studio</h2>
+<textarea id="draft" rows="8" placeholder="Paste your writing."></textarea>
+<button class="primary" onclick="revise()">Run Cambridge Review</button>
+<div id="rev"></div>
+</div>
+
+<div class="card page hidden" id="p7">
+<h2>Cambridge Quiz</h2>
+<p>Which sentence is more academic?</p>
+<label><input type="radio" name="q" value="a"> Kids get a lot of information.</label><br>
+<label><input type="radio" name="q" value="b"> Children obtain much information.</label>
+<p>Correct: AI are useful because it help students.</p>
+<textarea id="fix"></textarea>
+<button class="primary" onclick="quiz()">Submit</button>
+<div id="qout"></div>
+</div>
+
+<div class="card page hidden" id="p8">
+<h2>Teacher Dashboard</h2>
+<p>PIN: <code>120</code></p>
+<input id="pin" placeholder="Enter PIN">
+<button class="primary" onclick="teacher()">Open</button>
+<div id="teacherOut"></div>
+</div>
+
+</main>
+</div>
+
+<script>
+let current=0,done=1,xp=0;
+const pages=[...document.querySelectorAll('.page')];
+function go(i){pages[current].classList.add('hidden');current=i;pages[current].classList.remove('hidden');}
+function prog(){document.getElementById('bar').style.width=(done/9*100)+'%';document.getElementById('ptext').textContent=`Progress: ${done}/9`;document.getElementById('xp').textContent=xp+' XP';document.getElementById('star').textContent=xp>=60?'★★★':xp>=40?'★★':'☆';}
+function reward(p){xp+=p;done=Math.max(done,Math.min(9,Math.floor(xp/10)+1));prog();}
+prog();
+
+function topicCheck(){
+ let t=topic.value.trim();
+ if(/^(should|is|are|can|do|does)/i.test(t)&&t.endsWith('?')){
+ topicOut.innerHTML="<p class='ok'>✔ Excellent. Your topic is debatable.</p>";reward(10);}
+ else topicOut.innerHTML="<p class='warn'>Turn it into an academic question.</p>";
+}
+
+function sentenceCheck(){
+ if(s1.value==="because"){sout.innerHTML="<p class='ok'>Correct.</p>";reward(10);}
+ else sout.innerHTML="<p class='bad'>Incorrect.</p>";
+}
+
+function strength(){
+ let s=0;
+ if(claim.value.length>20)s++;
+ if(reason.value.length>25)s++;
+ if(evidence.value.length>20)s++;
+ let p=s*33;
+ meter.innerHTML=`<h3>${p}%</h3><div class="progress"><div class="bar" style="width:${p}%"></div></div><p>${s<3?"Add stronger evidence.":"Excellent balance of claim, reason, and evidence."}</p>`;
+ reward(10);
+}
+
+let dragged=null;
+document.querySelectorAll('.draggable').forEach(el=>{
+ el.addEventListener('dragstart',()=>dragged=el);
+});
+drop.addEventListener('dragover',e=>e.preventDefault());
+drop.addEventListener('drop',e=>{e.preventDefault();drop.appendChild(dragged);});
+function checkOrder(){
+ let arr=[...drop.children].map(x=>x.textContent);
+ let ok=JSON.stringify(arr)===JSON.stringify(["Issue","Arguments For","Arguments Against","Conclusion"]);
+ dragOut.innerHTML=ok?"<p class='ok'>Correct order!</p>":"<p class='warn'>Try again.</p>";
+ if(ok)reward(10);
+}
+
+function saveDraft(){
+ let data={title:title.value,issue:issue.value,pro:pro.value,con:con.value,counter:counter.value,conc:conc.value};
+ localStorage.setItem("cambridgeDraft",JSON.stringify(data));
+ saved.textContent="Yes"; saveMsg.innerHTML="<p class='ok'>Draft saved.</p>"; reward(10);
+}
+window.onload=()=>{let d=localStorage.getItem("cambridgeDraft"); if(d){let o=JSON.parse(d); Object.keys(o).forEach(k=>window[k].value=o[k]); saved.textContent="Yes";}};
+
+function revise(){
+ let txt=draft.value;
+ const rules=[
+ ["kids","children","Academic register"],
+ ["a lot","many","Formal vocabulary"],
+ ["alot","a lot","Spelling"],
+ ["AI are","AI is","Subject-verb agreement"],
+ ["it help","it helps","Verb agreement"],
+ ["bad","harmful","Academic vocabulary"],
+ ["good","beneficial","Academic vocabulary"]
+ ];
+ let list="";
+ rules.forEach(r=>{
+   let re=new RegExp(r[0],"gi");
+   if(re.test(txt)){txt=txt.replace(re,r[1]); list+=`<li><b>${r[0]}</b> → ${r[1]} (${r[2]})</li>`;}
+ });
+ rev.innerHTML=`<h3>Suggested Revision</h3><textarea rows="8">${txt}</textarea><h4>Track Changes</h4><ul>${list||"<li>No common issues detected.</li>"}</ul>`;
+ reward(10);
+}
+
+function quiz(){
+ let s=0;
+ let a=document.querySelector('input[name=q]:checked');
+ if(a&&a.value==='b')s++;
+ if(fix.value.toLowerCase().includes("ai is useful because it helps students"))s++;
+ qout.innerHTML=`<h3>${s}/2</h3><p>${s===2?"Excellent (B2–C1).":"Keep practising academic writing."}</p>`;
+ reward(10);
+}
+
+function teacher(){
+ if(pin.value!=="120"){teacherOut.innerHTML="<p class='bad'>Wrong PIN.</p>";return;}
+ let d=JSON.parse(localStorage.getItem("cambridgeDraft")||"{}");
+ teacherOut.innerHTML=`<table border="1" cellpadding="8"><tr><th>Field</th><th>Value</th></tr>
+ <tr><td>Title</td><td>${d.title||"-"}</td></tr>
+ <tr><td>Issue</td><td>${(d.issue||"-").substring(0,80)}</td></tr>
+ <tr><td>XP</td><td>${xp}</td></tr></table>`;
+}
+</script>
+</body>
+</html>
